@@ -190,6 +190,9 @@
 		7DAF5ABA20A68253004E122E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					percentBtn,
+				);
 				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Jamie Blumberg";
