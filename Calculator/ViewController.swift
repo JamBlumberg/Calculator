@@ -49,8 +49,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func operandButton(_ sender: UIButton) {
-        
-        firstNum = Double(numField.text!)
+        firstNum = formatNum(text: numField.text!).doubleValue
         operandPressed = true
         switch sender {
         case percentBtn:
@@ -73,28 +72,27 @@ class ViewController: UIViewController {
     @IBAction func equalBtn(_ sender: Any) {
         var result:Double = 0
         operandPressed = false
+        
+        
+        secondNum = formatNum(text: numField.text!).doubleValue
         switch mode
         {
         case .addition:
-            secondNum = Double(numField.text!)!
             result = firstNum + secondNum
-            numField.text = "\(result)"
+            setNumField(number: result)
         case .subtraction:
             secondNum = Double(numField.text!)!
             result = firstNum - secondNum
-            numField.text = "\(result)"
+            setNumField(number: result)
         case .multiplication:
-            secondNum = Double(numField.text!)!
             result = firstNum * secondNum
-            numField.text = "\(result)"
+            setNumField(number: result)
         case .division:
-            secondNum = Double(numField.text!)!
             result = firstNum / secondNum
-            numField.text = "\(result)"
+            setNumField(number: result)
         case .percentage:
-            secondNum = Double(numField.text!)!
             result = (firstNum/secondNum) * 100
-            numField.text = "\(result)"
+            setNumField(number: result)
         case .notSet:
             return
         }
@@ -104,28 +102,63 @@ class ViewController: UIViewController {
     @IBAction func numButtonPress(_ sender: UIButton) {
         let stringValue:String? = sender.titleLabel?.text
         
+        
         if freshUI {
             numField.text = ""
-            numField.text = stringValue
+            setNumField(number: (formatNum(text: stringValue!)).doubleValue)
         }
         
         else
         {
             if operandPressed {
                 numField.text = ""
-                numField.text = stringValue
+                setNumField(number: (formatNum(text: stringValue!)).doubleValue)
             }
                 
             else
             {
-                let oldText:String = numField.text!
-                numField.text = "\(oldText)" + "\(stringValue!)"
+                let oldText:String = (formatNum(text: numField.text!)).stringValue
+                let text:String = oldText + stringValue!
+                guard let dubValue:Double = Double(text) else {
+                    return
+                }
+                setNumField(number: dubValue)
             }
         }
         freshUI = false
         operandPressed = false
     }
     
+    func setNumField (number:Double) {
+        let formatter:NumberFormatter = NumberFormatter()
+        if (number) <= 99999999999 {
+            formatter.numberStyle = .decimal
+        }
+        else {
+            formatter.numberStyle = .scientific
+            formatter.positiveFormat = "0.###E+0"
+            formatter.exponentSymbol = "e"
+        }
+        
+        let num:NSNumber = NSNumber(value: number)
+        numField.text = formatter.string(from: num)
+    }
+    
+    func formatNum (text:String) -> NSNumber {
+        let cleanString:String = text.replacingOccurrences(of: ",", with: "")
+        let formatter:NumberFormatter = NumberFormatter()
+        let dirtyNum:NSNumber = formatter.number(from: cleanString)!
+        if (dirtyNum.doubleValue) <= 99999999999 {
+            formatter.numberStyle = .decimal
+        }
+        else {
+            formatter.numberStyle = .scientific
+            formatter.positiveFormat = "0.###E+0"
+            formatter.exponentSymbol = "e"
+        }
+        let cleanNum:NSNumber = formatter.number(from: cleanString)!
+        return cleanNum
+    }
     
     //creating a String var
     var name:String = "Jamie Blumberg"
